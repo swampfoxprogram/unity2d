@@ -1,0 +1,73 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class movement : MonoBehaviour
+{
+    public  float speed;
+    public Rigidbody2D rb;
+    public float jumpforce;
+    public float moveinput;
+
+    public float dashspeed = 3f;
+    private bool isground;
+    public Transform feetpos;
+    public float checkradius;
+    public LayerMask whatisground;
+
+    private float timer;
+    public float jumptime;
+    private bool isjumping;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            rb.transform.Translate(dashspeed, 0, 0);
+        }
+
+        isground = Physics2D.OverlapCircle(feetpos.position, checkradius, whatisground);
+
+        if (isground == true && Input.GetKeyDown(KeyCode.Space))
+        {
+            isjumping = true;
+            timer = jumptime;
+            rb.velocity = Vector2.up * jumpforce;
+        }
+
+        if(Input.GetKey(KeyCode.Space) && isjumping == true) 
+        {
+            if (timer > 0)
+            {
+                rb.velocity = Vector2.up * jumpforce;
+                timer -= Time.deltaTime;
+            }
+
+            else { isjumping = false; }
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isjumping = false;
+        }
+
+        
+
+    }
+    void FixedUpdate()
+    {
+        moveinput = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(moveinput * speed*Time.deltaTime, rb.velocity.y);
+        
+       
+
+    }
+}
